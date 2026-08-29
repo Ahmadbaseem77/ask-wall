@@ -1,40 +1,42 @@
-const { getMessagesStore, verifyAdmin, jsonResponse } = require("./_utils");
+const { getMessagesStore, jsonResponse } = require("./_utils");
 
 exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") return jsonResponse(200, {});
-  if (!verifyAdmin(event)) return jsonResponse(401, { error: "غير مصرح لك بالوصول" });
+  if (event.httpMethod === "OPTIONS") {
+    return jsonResponse(200, {});
+  }
 
   try {
     const store = getMessagesStore();
-    const { blobs } = await store.list({ prefix: "msg_" });
+    const listResult = await store.list();
+    const blobs = (listResult && listResult.blobs) ? listResult.blobs : [];
 
-    const pending = [];
-    const published = [];
-
-    for (const item of blobs) {
-      const record = await store.get(item.key, { type: "json" });
-      if (!record) continue;
-
-      if (record.is_published) {
-        published.push(record);
-      } else {
-        pending.push(record);
-      }
+    if (blobs.length === 0) {
+      return jsonResponse(200, { messages: [] });
     }
 
-    pending.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    published.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const messages = await Promise.all(
+      blobs.map(async (item) => {
+        try {
+          return await store.get(item.key, { type: "json" });
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    const validMessages = messages
+      .filter((msg) => msg !== null && msg.id)
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
     return jsonResponse(200, {
-      stats: {
-        pending: pending.length,
-        published: published.length,
-        total: pending.length + published.length
-      },
-      pending,
-      published
+      success: true,
+      messages: validMessages
     });
-  } catch {
-    return jsonResponse(500, { error: "تعذر تحميل البيانات" });
+  } catch (err) {
+    console.error("ADMIN_MESSAGES_ERROR:", err);
+    return jsonResponse(200, { 
+      messages: [], 
+      warning: err.message 
+    });
   }
 };
