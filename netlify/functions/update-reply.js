@@ -1,26 +1,37 @@
-const { getMessagesStore, sanitizeText, verifyAdmin, jsonResponse } = require("./_utils");
+const { getMessagesStore, jsonResponse, sanitizeText } = require("./_utils");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return jsonResponse(200, {});
-  if (!verifyAdmin(event)) return jsonResponse(401, { error: "غير مصرح لك بالوصول" });
-  if (event.httpMethod !== "PUT") return jsonResponse(405, { error: "Method Not Allowed" });
+  if (event.httpMethod !== "POST") return jsonResponse(405, { error: "Method Not Allowed" });
 
   try {
-    const { id, reply } = JSON.parse(event.body || "{}");
-    if (!id || !reply || typeof reply !== "string" || !reply.trim()) {
-      return jsonResponse(400, { error: "الرد لا يمكن أن يكون فارغاً." });
+    const body = JSON.parse(event.body || "{}");
+    const { id, reply } = body;
+
+    if (!id) {
+      return jsonResponse(400, { error: "معرف الرسالة مطلوب" });
     }
 
     const store = getMessagesStore();
-    const record = await store.get(id, { type: "json" });
-    if (!record) return jsonResponse(404, { error: "الرسالة غير موجودة" });
+    const messageRecord = await store.get(id, { type: "json" });
 
-    record.reply = sanitizeText(reply.trim());
-    record.updated_at = new Date().toISOString();
+    if (!messageRecord) {
+      return jsonResponse(404, { error: "الرسالة غير موجودة" });
+    }
 
-    await store.setJSON(id, record);
-    return jsonResponse(200, { success: true, message: "تم التحديث بنجاح" });
-  } catch {
-    return jsonResponse(500, { error: "فشل تحديث الرد" });
+    messageRecord.reply = reply ? (sanitizeText ? sanitizeText(reply.trim()) : reply.trim()) : "";
+    messageRecord.is_published = true;
+    messageRecord.replied_at = new Date().toISOString();
+
+    await store.setJSON(id, messageRecord);
+
+    return jsonResponse(200, {
+      success: true,
+      message: "تم حفظ الرد بنجاح",
+      data: messageRecord
+    });
+  } catch (err) {
+    console.error("UPDATE_REPLY_ERROR:", err);
+    return jsonResponse(500, { error: "تعذر حفظ الرد", details: err.message });
   }
 };
