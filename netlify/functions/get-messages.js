@@ -2,28 +2,37 @@ const { getMessagesStore, jsonResponse } = require("./_utils");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return jsonResponse(200, {});
-  if (event.httpMethod !== "GET") return jsonResponse(405, { error: "Method Not Allowed" });
 
   try {
     const store = getMessagesStore();
-    const { blobs } = await store.list({ prefix: "msg_" });
+    const listResult = await store.list();
+    const blobs = (listResult && listResult.blobs) ? listResult.blobs : [];
 
-    const messages = [];
-    for (const item of blobs) {
-      const record = await store.get(item.key, { type: "json" });
-      if (record && record.is_published === true) {
-        messages.push({
-          id: record.id,
-          message: record.message,
-          reply: record.reply,
-          created_at: record.created_at
-        });
-      }
+    if (blobs.length === 0) {
+      return jsonResponse(200, { messages: [] });
     }
 
-    messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    return jsonResponse(200, { messages });
-  } catch {
-    return jsonResponse(500, { error: "تعذر جلب الرسائل" });
+    const messages = await Promise.all(
+      blobs.map(async (item) => {
+        try {
+          return await store.get(item.key, { type: "json" });
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    // جلب الرسائل المنشورة فقط وترتيبها
+    const published = messages
+      .filter((m) => m && (m.is_published === true || m.is_published === "true"))
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+    return jsonResponse(200, {
+      success: true,
+      messages: published
+    });
+  } catch (err) {
+    console.error("GET_MESSAGES_ERROR:", err);
+    return jsonResponse(200, { messages: [] });
   }
 };
