@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الإدارة — ASK WALL</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="background">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
+
+  <section id="loginScreen" class="login-screen">
+    <div class="login-box">
+      <div class="login-logo">🔒</div>
+      <h1>لوحة التحكم</h1>
+      <p>أدخل رمز المرور السري للمتابعة</p>
+
+      <form id="loginForm">
+        <label for="passwordInput">رمز المرور / PIN</label>
+        <input 
+          type="password" 
+          id="passwordInput" 
+          placeholder="••••••" 
+          required 
+          autocomplete="current-password"
+        >
+        <div id="loginError" class="login-error"></div>
+
+        <button type="submit" id="loginBtn" class="primary-btn">
+          <span>دخول</span>
+          <span class="arrow">←</span>
+        </button>
+      </form>
+
+      <a href="index.html" class="back-link">← العودة للصفحة الرئيسية</a>
+    </div>
+  </section>
+
+  <div id="adminDashboard" class="hidden">
+    
+    <header class="admin-navbar">
+      <div class="brand">
+        <div class="brand-logo">⚙️</div>
+        <div>
+          <h1>لوحة الإدارة</h1>
+          <span>ASK WALL Control Panel</span>
+        </div>
+      </div>
+      <div class="admin-actions">
+        <a href="index.html" target="_blank" class="secondary-btn">معاينة الحائط</a>
+        <button id="logoutBtn" class="logout-btn">تسجيل الخروج</button>
+      </div>
+    </header>
+
+    <main class="admin-container">
+      
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span>بانتظار المراجعة (Pending)</span>
+          <strong id="statPending" style="color: #FFB74D;">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>المنشورة (Published)</span>
+          <strong id="statPublished" style="color: var(--success);">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>إجمالي الرسائل</span>
+          <strong id="statTotal">0</strong>
+        </div>
+      </section>
+
+      <nav class="admin-tabs-nav">
+        <button class="tab-button active" data-tab="pending">
+          الرسائل المعلقة (<span id="countPending">0</span>)
+        </button>
+        <button class="tab-button" data-tab="published">
+          الرسائل المنشورة (<span id="countPublished">0</span>)
+        </button>
+      </nav>
+
+      <section id="pendingSection" class="admin-section">
+        <div class="admin-section-header">
+          <h2>الرسائل المعلقة</h2>
+        </div>
+        <div id="pendingMessages" class="admin-messages">
+          <div class="admin-empty">
+            <div>✓</div>
+            <h3>لا توجد رسائل معلقة</h3>
+            <p>تمت مراجعة والرد على كافة الرسائل الواردة.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="publishedSection" class="admin-section hidden">
+        <div class="admin-section-header">
+          <h2>الرسائل المنشورة</h2>
+        </div>
+        <div id="publishedMessages" class="admin-messages">
+          <div class="admin-empty">
+            <div>💬</div>
+            <h3>لا توجد رسائل منشورة</h3>
+            <p>الرسائل المنشورة ستظهر هنا لتتمكن من تعديل الردود أو حذفها.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "ask-wall",
+  "version": "1.0.0",
+  "description": "Anonymous Q&A Wall on Netlify",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
