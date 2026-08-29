@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
 
 :root {
+    color-scheme: dark;
     --bg: #07070a;
     --bg-secondary: #0d0d12;
-    --card: rgba(18,18,25,.82);
-    --card-border: rgba(255,255,255,.08);
+    --card: rgba(18, 18, 25, 0.85);
+    --card-border: rgba(255, 255, 255, 0.09);
     --text: #f5f5f7;
     --muted: #8d8d9b;
     --accent: #ffffff;
@@ -22,20 +23,19 @@
 
 html {
     scroll-behavior: smooth;
+    background-color: #07070a;
+    color-scheme: dark;
 }
 
 body {
     min-height: 100vh;
-    background:
-        radial-gradient(
-            circle at top,
-            #161620 0%,
-            var(--bg) 45%
-        );
+    background-color: #07070a;
+    background: radial-gradient(circle at top, #161620 0%, var(--bg) 50%);
     color: var(--text);
     font-family: 'Cairo', sans-serif;
     overflow-x: hidden;
     direction: rtl;
+    -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -53,13 +53,14 @@ a {
     text-decoration: none;
 }
 
-/* BACKGROUND */
+/* BACKGROUND GLOW */
 .background {
     position: fixed;
     inset: 0;
     pointer-events: none;
     overflow: hidden;
     z-index: -1;
+    background-color: #07070a;
 }
 
 .glow {
@@ -68,7 +69,7 @@ a {
     height: 500px;
     border-radius: 50%;
     filter: blur(130px);
-    opacity: .09;
+    opacity: 0.12;
 }
 
 .glow-1 {
@@ -110,7 +111,7 @@ a {
     color: black;
     font-size: 22px;
     font-weight: 800;
-    box-shadow: 0 10px 35px rgba(255,255,255,.12);
+    box-shadow: 0 10px 35px rgba(255, 255, 255, 0.12);
 }
 
 .brand h1 {
@@ -127,7 +128,7 @@ a {
 .admin-link {
     color: var(--muted);
     font-size: 13px;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .admin-link:hover {
@@ -143,17 +144,26 @@ a {
 /* HERO & AVATAR */
 .hero {
     text-align: center;
-    padding: 60px 0 40px;
+    padding: 50px 0 35px;
 }
 
 .avatar-wrapper {
-    width: 104px;
-    height: 104px;
-    margin: 0 auto 20px;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 22px;
     border-radius: 50%;
-    padding: 3px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05));
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    padding: 4px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(108, 99, 255, 0.4), rgba(255, 255, 255, 0.08));
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(108, 99, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar-wrapper:hover {
+    transform: scale(1.03);
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(108, 99, 255, 0.35);
 }
 
 .avatar-img {
@@ -161,8 +171,10 @@ a {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+    object-position: center 15%;
     background: #111;
     display: block;
+    border: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 .hero-badge {
@@ -170,10 +182,10 @@ a {
     align-items: center;
     gap: 8px;
     border: 1px solid var(--card-border);
-    background: rgba(255,255,255,.035);
-    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px 16px;
     border-radius: 50px;
-    color: #aaa;
+    color: #bbb;
     font-size: 12px;
     margin-bottom: 25px;
 }
@@ -187,13 +199,13 @@ a {
 }
 
 .hero h2 {
-    font-size: clamp(34px, 6vw, 60px);
+    font-size: clamp(34px, 6vw, 56px);
     line-height: 1.2;
     letter-spacing: -1px;
 }
 
 .hero h2 span {
-    color: #777784;
+    color: #8e8e9e;
 }
 
 .hero p {
@@ -208,9 +220,10 @@ a {
 .card {
     background: var(--card);
     border: 1px solid var(--card-border);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-radius: var(--radius);
-    box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
 }
 
 .send-card {
@@ -250,12 +263,12 @@ a {
     border: 1px solid var(--card-border);
     border-radius: 17px;
     overflow: hidden;
-    background: rgba(0,0,0,.22);
-    transition: border-color .2s;
+    background: rgba(0, 0, 0, 0.35);
+    transition: border-color 0.2s;
 }
 
 .input-wrapper:focus-within {
-    border-color: rgba(255,255,255,.25);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 textarea {
@@ -300,7 +313,7 @@ textarea::placeholder {
     justify-content: center;
     align-items: center;
     gap: 12px;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .primary-btn:hover:not(:disabled) {
@@ -309,7 +322,7 @@ textarea::placeholder {
 }
 
 .primary-btn:active {
-    transform: scale(.98);
+    transform: scale(0.98);
 }
 
 .primary-btn:disabled {
@@ -326,8 +339,8 @@ textarea::placeholder {
     display: none;
     margin-top: 15px;
     padding: 15px;
-    border: 1px solid rgba(80,227,164,.2);
-    background: rgba(80,227,164,.06);
+    border: 1px solid rgba(80, 227, 164, 0.2);
+    background: rgba(80, 227, 164, 0.08);
     border-radius: 14px;
     align-items: center;
     gap: 12px;
@@ -337,8 +350,8 @@ textarea::placeholder {
     display: none;
     margin-top: 15px;
     padding: 15px;
-    border: 1px solid rgba(255,93,108,.2);
-    background: rgba(255,93,108,.06);
+    border: 1px solid rgba(255, 93, 108, 0.2);
+    background: rgba(255, 93, 108, 0.08);
     border-radius: 14px;
     color: var(--danger);
     font-size: 12px;
@@ -351,7 +364,7 @@ textarea::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(80,227,164,.12);
+    background: rgba(80, 227, 164, 0.15);
     color: var(--success);
 }
 
@@ -401,11 +414,13 @@ textarea::placeholder {
 }
 
 .message-card {
-    background: rgba(18,18,25,.75);
+    background: rgba(18, 18, 25, 0.85);
     border: 1px solid var(--card-border);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border-radius: 20px;
     overflow: hidden;
-    animation: appear .4s ease;
+    animation: appear 0.4s ease;
 }
 
 @keyframes appear {
@@ -451,7 +466,7 @@ textarea::placeholder {
 .reply {
     border-top: 1px solid var(--card-border);
     padding: 20px 23px;
-    background: rgba(255,255,255,.018);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .reply-label {
@@ -535,6 +550,7 @@ footer {
     border-radius: 25px;
     background: var(--card);
     border: 1px solid var(--card-border);
+    -webkit-backdrop-filter: blur(25px);
     backdrop-filter: blur(25px);
     text-align: center;
 }
@@ -577,7 +593,7 @@ footer {
 .login-box input {
     width: 100%;
     padding: 14px;
-    background: rgba(0,0,0,.3);
+    background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--card-border);
     border-radius: 13px;
     color: white;
@@ -587,13 +603,13 @@ footer {
 }
 
 .login-box input:focus {
-    border-color: rgba(255,255,255,.25);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .login-error {
     display: none;
     color: var(--danger);
-    background: rgba(255,93,108,.07);
+    background: rgba(255, 93, 108, 0.08);
     padding: 10px;
     border-radius: 10px;
     margin-top: 12px;
@@ -629,12 +645,12 @@ footer {
 .secondary-btn,
 .logout-btn {
     border: 1px solid var(--card-border);
-    background: rgba(255,255,255,.03);
+    background: rgba(255, 255, 255, 0.03);
     color: #aaa;
     padding: 10px 15px;
     border-radius: 11px;
     font-size: 11px;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .secondary-btn:hover {
@@ -643,7 +659,7 @@ footer {
 
 .logout-btn:hover {
     color: var(--danger);
-    border-color: rgba(255,93,108,.2);
+    border-color: rgba(255, 93, 108, 0.2);
 }
 
 .admin-container {
@@ -661,7 +677,7 @@ footer {
 .stat-card {
     padding: 22px;
     border-radius: 18px;
-    background: rgba(18,18,25,.7);
+    background: rgba(18, 18, 25, 0.7);
     border: 1px solid var(--card-border);
 }
 
@@ -692,11 +708,11 @@ footer {
     border-radius: 12px;
     font-size: 13px;
     font-weight: 600;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .tab-button.active {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.06);
     border-color: var(--card-border);
     color: #fff;
 }
@@ -721,7 +737,7 @@ footer {
 }
 
 .admin-message {
-    background: rgba(18,18,25,.8);
+    background: rgba(18, 18, 25, 0.8);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 22px;
@@ -729,7 +745,7 @@ footer {
 
 .admin-question {
     padding: 17px;
-    background: rgba(0,0,0,.25);
+    background: rgba(0, 0, 0, 0.25);
     border-radius: 13px;
     line-height: 1.9;
     font-size: 13px;
@@ -750,7 +766,7 @@ footer {
     padding: 14px;
     resize: vertical;
     border-radius: 13px;
-    background: rgba(0,0,0,.3);
+    background: rgba(0, 0, 0, 0.3);
     color: white;
     border: 1px solid var(--card-border);
     outline: none;
@@ -758,7 +774,7 @@ footer {
 }
 
 .reply-input:focus {
-    border-color: rgba(255,255,255,.2);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .admin-buttons {
@@ -775,7 +791,7 @@ footer {
     padding: 10px 16px;
     font-size: 11px;
     font-weight: 600;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .publish-btn,
@@ -791,11 +807,11 @@ footer {
 
 .delete-btn {
     color: var(--danger);
-    background: rgba(255,93,108,.08);
+    background: rgba(255, 93, 108, 0.08);
 }
 
 .delete-btn:hover {
-    background: rgba(255,93,108,.16);
+    background: rgba(255, 93, 108, 0.16);
 }
 
 .admin-empty {
@@ -821,16 +837,21 @@ footer {
     margin-top: 5px;
 }
 
-/* MOBILE */
+/* RESPONSIVE / MOBILE */
 @media (max-width: 700px) {
     .navbar {
         padding: 20px 0;
     }
     .hero {
-        padding: 40px 0 25px;
+        padding: 35px 0 20px;
+    }
+    .avatar-wrapper {
+        width: 135px;
+        height: 135px;
+        margin-bottom: 18px;
     }
     .hero h2 {
-        font-size: 36px;
+        font-size: 34px;
     }
     .send-card {
         padding: 18px;
@@ -849,20 +870,4 @@ footer {
         flex-direction: column;
         gap: 8px;
     }
-}
-/* تكبير إطار الصورة الشخصية وضبط موضع الوجه */
-.avatar-wrapper {
-    width: 160px !important;
-    height: 160px !important;
-    margin: 0 auto 1.5rem auto !important;
-}
-
-.avatar-img {
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 50% !important;
-    object-fit: cover !important;
-    object-position: center 15% !important;
-    border: 3px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.25) !important;
 }
