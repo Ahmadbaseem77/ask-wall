@@ -32,34 +32,40 @@ exports.handler = async (event) => {
     }
 
     const ip = getClientIp(event);
-    const ipHash = crypto.createHash("sha256").update(ip).digest("hex").slice(0, 16);
-    const rateStore = getRateLimitStore();
-    const rateKey = `rate_${ipHash}`;
+    const ipHash = crypto.createHash("sha256").update(ip || "unknown").digest("hex").slice(0, 16);
     
-    const now = Date.now();
-    let rateData = await rateStore.get(rateKey, { type: "json" });
-    if (!rateData || !Array.isArray(rateData.timestamps)) {
-      rateData = { timestamps: [] };
+    // فحص وتخزين التكرار
+    try {
+      const rateStore = getRateLimitStore();
+      const rateKey = `rate_${ipHash}`;
+      const now = Date.now();
+      let rateData = await rateStore.get(rateKey, { type: "json" });
+      if (!rateData || !Array.isArray(rateData.timestamps)) {
+        rateData = { timestamps: [] };
+      }
+
+      const fiveMinutes = 5 * 60 * 1000;
+      rateData.timestamps = rateData.timestamps.filter(ts => now - ts < fiveMinutes);
+
+      if (rateData.timestamps.length >= 5) {
+        return jsonResponse(429, {
+          error: "لقد أرسلت عدة رسائل في وقت قصير. يرجى الانتظار بضع دقائق."
+        });
+      }
+
+      rateData.timestamps.push(now);
+      await rateStore.setJSON(rateKey, rateData);
+    } catch (rateErr) {
+      console.error("Rate limit check bypassed:", rateErr.message);
     }
 
-    const fiveMinutes = 5 * 60 * 1000;
-    rateData.timestamps = rateData.timestamps.filter(ts => now - ts < fiveMinutes);
-
-    if (rateData.timestamps.length >= 3) {
-      return jsonResponse(429, {
-        error: "لقد أرسلت عدة رسائل في وقت قصير. يرجى الانتظار بضع دقائق."
-      });
-    }
-
-    rateData.timestamps.push(now);
-    await rateStore.setJSON(rateKey, rateData);
-
+    // حفظ الرسالة
     const store = getMessagesStore();
-    const id = `msg_${now}_${crypto.randomBytes(3).toString("hex")}`;
+    const id = `msg_${Date.now()}_${crypto.randomBytes(3).toString("hex")}`;
     
     const messageRecord = {
       id,
-      message: sanitizeText(trimmed),
+      message: sanitizeText ? sanitizeText(trimmed) : trimmed,
       reply: "",
       is_published: false,
       created_at: new Date().toISOString()
@@ -71,7 +77,12 @@ exports.handler = async (event) => {
       success: true,
       message: "تم استلام رسالتك وستتم مراجعتها قبل ظهورها على الحائط."
     });
-  } catch {
-    return jsonResponse(500, { error: "تعذر إرسال الرسالة، يرجى المحاولة لاحقاً." });
+  } catch (err) {
+    console.error("FUNCTION_ERROR:", err);
+    return jsonResponse(500, { 
+      error: "تعذر إرسال الرسالة", 
+      details: err.message,
+      stack: err.stack 
+    });
   }
 };
